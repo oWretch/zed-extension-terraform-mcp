@@ -1,0 +1,52 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+    paths-ignore: # Don't trigger on releases
+      - Cargo.toml
+      - extension.toml
+      - package.json
+      - package-lock.json
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Release
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Publish extension
+        uses: oWretch/zed-extension-action@1d337a3e55f51399c22244d1277a4c629b33e886
+        with:
+          extension-name: bicep
+          push-to: oWretch/zed-extensions
+          tag: v${{ steps.release.outputs.ReleaseVersion }}
+        env:
+          COMMITTER_TOKEN: ${{ secrets.EXTENSION_PUBLISH_TOKEN }}

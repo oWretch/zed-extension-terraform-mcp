@@ -1,0 +1,10 @@
+id = "terraform-context-server"
+name = "Terraform Context Server"
+description = "Model Context Server for HashiCorp Terraform"
+version = "1.0.0"
+schema_version = 1
+authors = ["Jerome Brown <Jerome@SoliDeoGloria.tech>"]
+repository = "https://github.com/oWretch/zed-extension-terraform-mcp"
+
+[context_servers.terraform-context-server]
+name = "Terraform Context Server"
